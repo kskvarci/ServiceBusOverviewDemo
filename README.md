@@ -6,11 +6,15 @@
 	- [Authentication and Authorization](#Authentication-and-Authorization) 
 	- [Data Encryption](#Data-Encryption)
 	- [Advanced Capabilities](#Advanced-Capabilities)
+	- [SDKs](#SDKs)	
 	- [HA and DR](#HA-and-DR)
 		- [HA](#HA)
 		- [DR](#DR)  
 - [Demo](#Demo)
 # Messaging on Azure
+
+[Choose a messaging solution on Azure](https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging)
+
 - **Event Grid:**  
 Event Grid uses a pub-sub model. It's designed for event based programming and deals in lightweight notifications of condition or state changes.   
 
@@ -160,6 +164,17 @@ Either Basic Standard or Premium.
 	- Must be enabled at queue creation time.
 	- Duplicate detection is based off of MessageID which is set by the application.
 	- Can negatively impact throughput  
+
+## SDKs
+- [.NET](https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging?view=azure-dotnet)
+- [Java](https://docs.microsoft.com/en-us/java/api/overview/azure/servicebus?view=azure-java-stable), JMS (QPID JMS)  
+- Python
+- Node.js
+- PHP
+- Ruby
+- Go
+- PowerShell
+- REST
 
 ## HA and DR
 The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service-bus/v1_1/) for Service Bus irrespective of configuration is 99.9%.
