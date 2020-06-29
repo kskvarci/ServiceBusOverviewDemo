@@ -1,15 +1,15 @@
 # TOC
 - [Messaging on Azure](#Messaging-on-Azure)
 - [Service Bus Overview](#Service-Bus-Overview)
-	- [Pricing Tiers](#Pricing-Tiers)
+	- [Tiers](#Tiers)
 	- [Queues and Topics](#Queues-and-Topics)
 	- [Authentication and Authorization](#Authentication-and-Authorization) 
 	- [Data Encryption](#Data-Encryption)
 	- [Advanced Capabilities](#Advanced-Capabilities)
-	- [HA and DR](HA-and-DR)
-		- [HA](HA)
-		- [DR](DR)  
-- Demo
+	- [HA and DR](#HA-and-DR)
+		- [HA](#HA)
+		- [DR](#DR)  
+- [Demo](#Demo)
 # Messaging on Azure
 - **Event Grid:**  
 Event Grid uses a pub-sub model. It's designed for event based programming and deals in lightweight notifications of condition or state changes.   
@@ -31,22 +31,36 @@ Region
 	- **Pricing Tier:**  
 Either Basic Standard or Premium.  
 
-## Pricing Tiers
-- **Basic:**
-	- No message sessions
-
-- **Standard:**
-	- Shared CPU / Memory across customers.  
-
-- **Premium:**
-	- CPU and memory isolation which equates to predictable and consistent performance (scale unit).
+## Tiers
+- **Premium:** (recommended)
+	- Supports queues, scheduled messages, topics, transactions, de-duplication, sessions, forwarding.
+	- Limited to 1MB message size
+	- CPU and memory isolation which equates to predictable and consistent performance (messaging unit).
 	- Scale from 1-8 "messaging units" (MU).
 	- An MU is essentially a dedicate VM.
 	- The number of MUs you scale to should be based on observed load (CPU).
 	- Scaling can be automated using Azure Automation. No autoscale built into the service itself.
-	- Recommended for all production use cases.
+	- Limited to 1000 connections (per MU) 
 	- **Required** for virtual network integration features like services endpoints and private link.  
-	- Pricing for premium is linear based on the number of MUs in operation per hour.
+	- Recommended for all production use cases.
+	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) for premium is linear based on the number of MUs in operation per hour.  
+
+- **Standard:**
+	- Supports queues, scheduled messages, topics, transactions, de-duplication, sessions, forwarding.
+	- Limited to 256k message size
+	- Limited to 1000 connections w/ ability to burst over for a cost.
+	- no resource isolation
+	- no geo-disaster recovery  
+	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is base charge + by the operation
+
+- **Basic:**
+	- Supports queues and schedules messages
+	- Does not support topics, transactions, de-duplication, sessions, forwarding/
+	- Limited to 256k message size
+	- Limited to 100 connections
+	- no resource isolation
+	- no geo-disaster recovery
+	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is by the operation
 
 ## Queues and Topics
 - Service Bus Queues:
@@ -148,10 +162,14 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 
 # Demo
-- [ARM Template](ARM/azuredeploy-namespace.json) Overview (Namespace)
+- Deployment (ARM Templates)
+	- Namespaces
+	- Queues and Topics
+	- Geo-Replication Config
 - Deployed Resource Walk-through in the Portal
 	- SKU
 	- Zone Redundancy
 	- Messaging Units (scaling)
 	- Diagnostic Logging Config (OperationalLogs and AllMetrics)
-	- 
+	- Encryption
+	- RBAC Config
