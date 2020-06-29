@@ -1,5 +1,5 @@
 # TOC
-{{TOC}}
+- [Messaging on Azure](Messaging-on-Azure)
 
 # Messaging on Azure
 - **Event Grid:**  
