@@ -1,6 +1,15 @@
 # TOC
-- [Messaging on Azure](Messaging-on-Azure)
-
+- [Messaging on Azure](#Messaging-on-Azure)
+- [Service Bus Overview](#Service-Bus-Overview)
+	- [Pricing Tiers](#Pricing-Tiers)
+	- [Queues and Topics](#Queues-and-Topics)
+	- [Authentication and Authorization](#Authentication-and-Authorization) 
+	- [Data Encryption](#Data-Encryption)
+	- [Advanced Capabilities](#Advanced-Capabilities)
+	- [HA and DR](HA-and-DR)
+		- [HA](HA)
+		- [DR](DR)  
+- Demo
 # Messaging on Azure
 - **Event Grid:**  
 Event Grid uses a pub-sub model. It's designed for event based programming and deals in lightweight notifications of condition or state changes.   
@@ -39,7 +48,7 @@ Either Basic Standard or Premium.
 	- **Required** for virtual network integration features like services endpoints and private link.  
 	- Pricing for premium is linear based on the number of MUs in operation per hour.
 
-## Two main capabilities
+## Queues and Topics
 - Service Bus Queues:
 ![](images/about-service-bus-queue.png "")
 - Service Bus Topics:
@@ -57,7 +66,7 @@ Two main methods
 - Data in the messaging store is automatically encrypted (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
 - It's possible to encrypt using a [customer managed key](https://docs.microsoft.com/en-us/azure/service-bus-messaging/configure-customer-managed-key) stored in Azure Key Vault.
 	
-## Advanced Capabilities (Across both Topics and Queues)
+## Advanced Capabilities
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
 	- Concurrent de-multiplexing of interleaved message streams.
 	- [Java SDK example](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/servicebus/azure-messaging-servicebus/src/samples/java/com/azure/messaging/servicebus/SendAndReceiveSessionMessageSample.java)
@@ -122,13 +131,13 @@ Two main methods
 	- Duplicate detection is based off of MessageID which is set by the application.
 	- Can negatively impact throughput  
 
-## High Availability / Disaster Recovery
+## HA and DR
 The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service-bus/v1_1/) for Service Bus irrespective of configuration is 99.9%.
 ### HA
 - [Availability zones](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-outages-disasters#availability-zones) are supported only with Service Bus Premium SKU and must be enabled at creation time. This spreads the namespace across three distinct zones in regions that support it. Both East US 2 and Central US support zones.
 - Three copies of messaging store (1 primary and 2 secondary) are maintained. Service Bus keeps all the three copies in sync for data and management operations. If the primary copy fails, one of the secondary copies is promoted to primary with no perceived downtime.  
 
-### DR - Geo-Replication
+### DR
 - Service Bus Premium SKU supports [Geo-Disaster Recovery](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-geo-dr).
 - Two namespaces in different regions can be paired together in a primary / secondary relationship.
 - When paired, all entity **metadata** is replicated between primary and secondary namespaces.
