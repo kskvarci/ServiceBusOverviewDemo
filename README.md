@@ -111,7 +111,7 @@ Either Basic Standard or Premium.
 	- Use to scale out topics as subscriptions on a given topic are limited to 2000:
 	![](images/autoforwardscale.gif "")
 	- Use to decouple senders and receivers
-	- In below example a subscription is set up to forwarl all message in a topic into a queue.
+	- In below example a subscription is set up to forward all message in a topic into a queue.
 	![](images/autoforwarddecouple.gif "")
   
 - [**Dead-letter queue**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues)
@@ -193,3 +193,5 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 	- RBAC Config  
 
 - Demo Test App
+	- Writing to and Reading from queue
+	- Namespace failover
