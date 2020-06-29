@@ -64,18 +64,32 @@ Either Basic Standard or Premium.
 
 ## Queues and Topics
 - Service Bus Queues:
+	- Used for point-to-point communication.
+	- Messages in queues are ordered and timestamped on arrival.
+	- Once accepted, the message is held safely in redundant storage.
+ Messages are delivered in pull mode, only delivering messages when requested.
 ![](images/about-service-bus-queue.png "")
 - Service Bus Topics:
-![](images/about-service-bus-topic.png "")
+	- Used for publish/subscribe scenarios.
+	- A topic will have one or more named subscriptions.
+	- Messages that land in a subscriptions can be filtered.
+![](images/about-service-bus-topic.png "")  
+
 ## Authentication and Authorization
-Two main methods
 - [Azure AD](https://docs.microsoft.com/en-us/azure/service-bus-messaging/authenticate-application) (recommended)
 	- Using Azure RBAC, access can be granted at the containing mgmt. group, subscription, resource group, namespace or queue/topic/subscription. use the narrowest scope.
 	- built in roles exist for [data owner](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-owner), [data sender](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-sender) and [data receiver](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-receiver)
-	- Access can be granted to any AAD principal, user, group, service principal, managed identity, etc.  
+	- Access can be granted to any AAD principal, user, group, service principal, managed identity, etc. 
+	- If accessing an entity from code running within Azure use of [managed identity](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-managed-service-identity) is encouraged.
 
-- [Shared access signature](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization#shared-access-signature)
-	- dsdf
+- [Shared access signature](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-sas)
+	- Java example [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/SasAuthorization).
+	- Shared Access Authorization Policies can be configured at the namespace and entity level.
+	- Rights can be configured on the policy rules that are a combination of Send, Listen and Manage (inclusive of Send and Listen).
+	- Each rule has a primary and secondary key (secret)
+	- By default there is a policy rule called RootManagedSharedAccessKey on the namespace at creation. It's recommended not to use this. 
+	- If a caller has access to the keys associated with a policy, they can derive a SAS token that can be used to interact w/ the namespace or entity.
+	- These SAS tokens are similar in concept to those used on Azure Storage Accounts.
 ## Data Encryption
 - Data in the messaging store is automatically encrypted (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
 - It's possible to encrypt using a [customer managed key](https://docs.microsoft.com/en-us/azure/service-bus-messaging/configure-customer-managed-key) stored in Azure Key Vault.
@@ -90,6 +104,7 @@ Two main methods
 	![](images/sessions.png "")
   
 - [**Autoforwarding**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-auto-forwarding)
+	- Java examples [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/AutoForward).
 	- Automatically remove messages placed in one queue or subscription and put them in a second queue (or topic).
 	- Enabled via code on a per-queue or subscription basis.
 	- Target needs to be in the same namespace.
@@ -126,6 +141,7 @@ Two main methods
 	- It's also possible to group your operations within the scope of a transaction so that all operations must succeed for the transaction to be committed to the entity.
 
 - [**Filtering and Actions**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/topic-filters)
+	- Java examples [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/TopicFilters).
 	- Applies only to topic subscriptions.
 	- Filter which messages you want to receive.
 	- Filters are specified via topic subscription rules. Rules can contain conditions as follows:
@@ -162,10 +178,12 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 
 # Demo
-- Deployment (ARM Templates)
-	- Namespaces
-	- Queues and Topics
-	- Geo-Replication Config
+- Deploy a test environment (ARM Templates)
+	- [Deployment Script](ARM/deploy.sh)
+	- [Namespace Template](ARM/azuredeploy-namespace.json)
+	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)
+	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
+
 - Deployed Resource Walk-through in the Portal
 	- SKU
 	- Zone Redundancy
