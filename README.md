@@ -128,7 +128,7 @@ Either Basic Standard or Premium.
   
 - [**Message deferral**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-deferral)
 	- Allows a client to defer processing of a message that it is willing to process.
-	- Message stays safely in the messaging store but cannot be read unless explicitley retrieved by sequence number.  
+	- Message stays safely in the messaging store but cannot be read unless explicitly retrieved by sequence number.  
 
 - [**Batching** ](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-performance-improvements?tabs=net-standard-sdk#client-side-batching)
 	- Delay sending of a message to a queue or topic until a threshold is hit (time based). After which all messages in the windows are sent as a single batch.
@@ -179,7 +179,7 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 # Demo
 - Deploy a test environment *(two premium SKU namespaces with geo-replication enabled)*
-	- [Deployment Script](ARM/deploy.sh) *(this will deploy the below teamplates)*
+	- [Deployment Script](ARM/deploy.sh) *(this will deploy the below templates)*
 	- [Namespace Template](ARM/azuredeploy-namespace.json)
 	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)
 	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
