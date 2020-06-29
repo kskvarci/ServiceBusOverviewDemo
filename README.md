@@ -178,16 +178,18 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 
 # Demo
-- Deploy a test environment (ARM Templates)
-	- [Deployment Script](ARM/deploy.sh)
+- Deploy a test environment *(two premium SKU namespaces with geo-replication enabled)*
+	- [Deployment Script](ARM/deploy.sh) *(this will deploy the below teamplates)*
 	- [Namespace Template](ARM/azuredeploy-namespace.json)
 	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)
 	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
 
-- Deployed Resource Walk-through in the Portal
+- Walk Through Deployed Resources in Portal
 	- SKU
 	- Zone Redundancy
 	- Messaging Units (scaling)
-	- Diagnostic Logging Config (OperationalLogs and AllMetrics)
+	- Diagnostic Logging Config *(OperationalLogs and AllMetrics)*
 	- Encryption
-	- RBAC Config
+	- RBAC Config  
+
+- Demo Test App
