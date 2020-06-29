@@ -1,12 +1,5 @@
-# Agenda
-- Messaging on Azure (options)
-- Service Bus Overview
-- Demo
-	- Namespace
-	- Writing and Reading from Queues and Topics
-	- Monitoring
-	- Geo Redundancy / Alias Configuration
-	- Failover
+# TOC
+{{TOC}}
 
 # Messaging on Azure
 - **Event Grid:**  
@@ -51,6 +44,19 @@ Either Basic Standard or Premium.
 ![](images/about-service-bus-queue.png "")
 - Service Bus Topics:
 ![](images/about-service-bus-topic.png "")
+## Authentication and Authorization
+Two main methods
+- [Azure AD](https://docs.microsoft.com/en-us/azure/service-bus-messaging/authenticate-application) (recommended)
+	- Using Azure RBAC, access can be granted at the containing mgmt. group, subscription, resource group, namespace or queue/topic/subscription. use the narrowest scope.
+	- built in roles exist for [data owner](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-owner), [data sender](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-sender) and [data receiver](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#azure-service-bus-data-receiver)
+	- Access can be granted to any AAD principal, user, group, service principal, managed identity, etc.  
+
+- [Shared access signature](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-authentication-and-authorization#shared-access-signature)
+	- dsdf
+## Data Encryption
+- Data in the messaging store is automatically encrypted (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
+- It's possible to encrypt using a [customer managed key](https://docs.microsoft.com/en-us/azure/service-bus-messaging/configure-customer-managed-key) stored in Azure Key Vault.
+	
 ## Advanced Capabilities (Across both Topics and Queues)
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
 	- Concurrent de-multiplexing of interleaved message streams.
@@ -134,7 +140,9 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 # Demo
 - [ARM Template](ARM/azuredeploy-namespace.json) Overview (Namespace)
-- Deployed Resource Walk-through
+- Deployed Resource Walk-through in the Portal
 	- SKU
 	- Zone Redundancy
 	- Messaging Units (scaling)
+	- Diagnostic Logging Config (OperationalLogs and AllMetrics)
+	- 
