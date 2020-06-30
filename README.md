@@ -1,31 +1,21 @@
 # TOC
-- [Messaging on Azure](#Messaging-on-Azure)
 - [Service Bus Overview](#Service-Bus-Overview)
 	- [Tiers](#Tiers)
 	- [Queues and Topics](#Queues-and-Topics)
 	- [Authentication and Authorization](#Authentication-and-Authorization) 
 	- [Data Encryption](#Data-Encryption)
 	- [Advanced Capabilities](#Advanced-Capabilities)
-	- [SDKs](#SDKs)	
+	- [SDKs and Protocols](#SDKs-and-Protocols)	
+	- [Networking](#Networking)
 	- [HA and DR](#HA-and-DR)
 		- [HA](#HA)
 		- [DR](#DR)  
 - [Demo](#Demo)
-# Messaging on Azure
-
-[Choose a messaging solution on Azure](https://docs.microsoft.com/en-us/azure/architecture/guide/technology-choices/messaging)
-
-- **Event Grid:**  
-Event Grid uses a pub-sub model. It's designed for event based programming and deals in lightweight notifications of condition or state changes.   
-
-- **Event Hub:**  
-Event Hub is used for data 	streaming.  
-
-- **Service Bus:**  
-Service bus is used for is designed for traditional enterprise messaging. This is the service to use if your application needs a way of passing high value messages that cannot be lost or duplicated.
 
 # Service Bus Overview
-- Everything starts w/ creation of a Service Bus **Namespace**. A namespace is a resource that gets deployed to a resource group in Azure with the following characteristics:
+- With Service Bus, everything starts w/ creation of a Service Bus **Namespace**. Namespaces are the top level containers that hold other messaging entities (queues, topics, subscriptions).  
+
+- A namespace is a resource that gets deployed to a resource group in Azure with the following characteristics:
 	- **Name:**  
 This is globally unique. A DNS name (*.servicebus.windows.net)  
 
@@ -76,7 +66,7 @@ Either Basic Standard or Premium.
 - Service Bus Topics:
 	- Used for publish/subscribe scenarios.
 	- A topic will have one or more named subscriptions.
-	- Messages that land in a subscriptions can be filtered.
+	- When messages are sent to a topic, the subscriptions that they land in can be controlled by configuring subscription based [filters/rules](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#rules-and-actions).
 ![](images/about-service-bus-topic.png "")  
 
 ## Authentication and Authorization
@@ -165,9 +155,11 @@ Either Basic Standard or Premium.
 	- Duplicate detection is based off of MessageID which is set by the application.
 	- Can negatively impact throughput  
 
-## SDKs
+## SDKs and Protocols
+### SDKs
 - [.NET](https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging?view=azure-dotnet)
-- [Java](https://docs.microsoft.com/en-us/java/api/overview/azure/servicebus?view=azure-java-stable), JMS (QPID JMS)  
+- [Java](https://docs.microsoft.com/en-us/java/api/overview/azure/servicebus?view=azure-java-stable)
+- JMS ([Qpid JMS](https://qpid.apache.org/components/jms/)) - keep in mind that the [certain JMS features are limited](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-java-how-to-use-jms-api-amqp#unsupported-features-and-restrictions). Primarily those that relate to dynamic entity management.  
 - Python
 - Node.js
 - PHP
@@ -175,6 +167,20 @@ Either Basic Standard or Premium.
 - Go
 - PowerShell
 - REST
+### Protocols
+- [AMQP](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-overview) (default and recommended)
+- SMBP (legacy)
+
+## Networking
+- Service bus namespaces are by default available on public endpoints.
+- Service Bus supports both [Service Endpoints](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-service-endpoints) and [Private Link](https://docs.microsoft.com/en-us/azure/service-bus-messaging/private-link-service) for integration into private networks.
+- Service Bus, similar to many other Azure services, supports a [per-instance firewall](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-ip-filtering) that can be used to restrict traffic to known networks.
+- Depending on the client and protocol being used the following ports are required for connectivity
+	- AMQP (5671)
+	- SMBP (9354)
+	- HTTPS (443)
+- Keep in mind that if using service endpoints, you must [accommodate for connectivity in HA/DR scenarios](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-geo-dr#recommended-configuration).  
+![](images/private-endpoints-virtual-networks.png "")
 
 ## HA and DR
 The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service-bus/v1_1/) for Service Bus irrespective of configuration is 99.9%.
@@ -193,20 +199,28 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 
 # Demo
-- Deploy a test environment *(two premium SKU namespaces with geo-replication enabled)*
+- Walk through ARM templates used to deploy a test environment *(two premium SKU namespaces with geo-replication enabled)*
 	- [Deployment Script](ARM/deploy.sh) *(this will deploy the below templates)*
 	- [Namespace Template](ARM/azuredeploy-namespace.json)
 	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)
-	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
+	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)   
 
-- Walk Through Deployed Resources in Portal
-	- SKU
-	- Zone Redundancy
-	- Messaging Units (scaling)
-	- Diagnostic Logging Config *(OperationalLogs and AllMetrics)*
-	- Encryption
-	- RBAC Config  
+- **"Hello World" Demo**
+	- Walk Through Deployed Resources in Portal
+		- SKU
+		- Zone Redundancy
+		- Messaging Units (scaling)
+		- Diagnostic Logging Config *(OperationalLogs and AllMetrics)*
+		- Encryption
+		- RBAC Config
+		- Generate SAS for queue1
 
-- Demo Test App
-	- Writing to and Reading from queue
-	- Namespace failover
+	- Build and Run a Simple Java Client
+		- Quick walkthrough of code
+		- Add connection string
+		- Build
+		- Send to and Recieve from Queue via alias
+		- Check queue metrics
+		- conduct manual geo failover
+		- Send to and Recieve from Queue via alias
+		- Check queue metrics
