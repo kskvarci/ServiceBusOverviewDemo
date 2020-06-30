@@ -25,7 +25,7 @@
                 "lockDuration": "PT30S",
                 "maxSizeInMegabytes": 1024,
                 "requiresDuplicateDetection": false,
-                "requiresSession": false,
+                "requiresSession": true,
                 "defaultMessageTimeToLive": "P14D",
                 "deadLetteringOnMessageExpiration": false,
                 "enableBatchedOperations": true,
