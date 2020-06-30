@@ -216,7 +216,7 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 		- Generate SAS for queue1
 		- Geo-Recovery, Alias, Primary and Secondary Namespaces
 
-	- Build and Run a Simple Java Client
+	- Build and Run a [Simple Java Client](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
 		- Quick walkthrough of code
 		- Add connection string to code
 		- Maven Build
