@@ -10,6 +10,7 @@ import com.azure.messaging.servicebus.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.io.Console;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -31,7 +32,7 @@ public class SendAndReceiveSessionMessageSample {
         // 1. Going to your Service Bus namespace in Azure Portal.
         // 2. Go to "Shared access policies"
         // 3. Copy the connection string for the "RootManageSharedAccessKey" policy.
-        String connectionString = "CONNSTRING HERE";
+        String connectionString = "ConnstringHere";
 
         // Create a Queue in that Service Bus namespace.
         String queueName = "queue1";
@@ -77,10 +78,11 @@ public class SendAndReceiveSessionMessageSample {
 
             // Publish the batch since we are done.
             return sender.send(batch);
-        }).subscribe(unused -> System.out.println("Batch sent."),
+        }).subscribe(unused -> System.out.println("Batch sent asynch."),
             error -> System.err.println("Error occurred while publishing message batch: " + error),
             () -> System.out.println("Batch send complete."));
-
+        
+        waitForEnter(null);
         // After sending that message, we receive the messages for that sessionId.
         receiver.receive().flatMap(context -> {
             ServiceBusReceivedMessage message = context.getMessage();
@@ -98,5 +100,16 @@ public class SendAndReceiveSessionMessageSample {
         // Close the sender and receiver.
         sender.close();
         receiver.close();
+    }
+
+    public static void waitForEnter(String message) {
+        Console c = System.console();
+        if (c != null) {
+            // printf-like arguments
+            if (message != null)
+                c.format(message);
+            c.format("\nPress ENTER to receive async.\n");
+            c.readLine();
+        }
     }
 }

@@ -214,13 +214,18 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 		- Encryption
 		- RBAC Config
 		- Generate SAS for queue1
+		- Geo-Recovery, Alias, Primary and Secondary Namespaces
 
 	- Build and Run a Simple Java Client
 		- Quick walkthrough of code
-		- Add connection string
-		- Build
-		- Send to and Recieve from Queue via alias
-		- Check queue metrics
+		- Add connection string to code
+		- Maven Build
+		- Send to Queue sync
+		- Check Service Bus Explorer for messages
+		- Read from queue async
+		- Check Service Bus Explorer for messages
 		- conduct manual geo failover
-		- Send to and Recieve from Queue via alias
-		- Check queue metrics
+		- Send to Queue sync
+		- Check Service Bus Explorer for messages
+		- Read from queue async
+		- Check Service Bus Explorer for messages
