@@ -222,44 +222,52 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 
 
 # Demo
-- The below templates can be used to deploy a test environment that includes two premium SKU namespaces with geo-replication enabled.
-	- [Deployment Script](ARM/deploy.sh)  
-*(this will deploy the below templates)*
-	- [Namespace Template](ARM/azuredeploy-namespace.json)  
-*Can be used to deploy one or more namespaces.*
-	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)  
-*Deploy queues, topics and subscriptions into namespaces.*
-	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
-*Configure geo-replication including an alias between two geo-dispersed namespaces.*
 
-- **"Hello World" Demo**
-	- Walk Through Deployed Resources in Portal
-		- SKU
-		- Zone Redundancy
-		- Messaging Units (scaling)
-		- Diagnostic Logging Config *(OperationalLogs and AllMetrics)*
-		- Encryption
-		- RBAC Config
-		- Generate SAS for queue1
-		- Geo-Recovery, Alias, Primary and Secondary Namespaces
+## **Make sure Pre-Reqs are present:**
+- Windows Subsystem for Linux with:
+	- Azure CLI (authenticated w/ correct subscription selected)
+	- Maven
+	- openjdk 11
+- This repo cloned locally
 
-	- Build and Run a Simple Java Client
-		- Quick walkthrough of [code](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
-		- Add connection string to code.  
+## Deploy Resources:**
+Run the [deployment script](ARM/deploy.sh).
+```
+ cd ARM
+ ./deploy.sh
+```
+This will call three ARM templates. One for [namespaces](ARM/azuredeploy-namespace.json), one for [entities](ARM/azuredeploy-queuestopics.json) and one to set up [geo-redundant pairing and an alias](ARM/azuredeploy-georeplication.json).  
+
+## **Walk Through Deployed Namespaces in Portal:**
+- SKU
+- Zone Redundancy
+- Messaging Units (scaling)
+- Diagnostic Logging Config *(OperationalLogs and AllMetrics)*
+- Encryption
+- RBAC Config
+- **Generate SAS for queue1**. This will be used in client demo.
+- Geo-Recovery, Alias, Primary and Secondary Namespaces  
+
+## **Build and Run a Simple Java Client:**
+- Quick walkthrough of [code](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
+- Add connection string to code.  
 Use the connection string associated w/ the SAS created in the above portal walk-through.
-		- Maven Build  
- ```
- cd test
- mvn compile
- mvn package
-  ```
-  
-		- Send to Queue sync
-		- Check Service Bus Explorer for messages
-		- Read from queue async
-		- Check Service Bus Explorer for messages
-		- conduct manual geo failover
-		- Send to Queue sync
-		- Check Service Bus Explorer for messages
-		- Read from queue async
-		- Check Service Bus Explorer for messages
+- Maven Build  
+ 	```
+	 cd test
+	 mvn clean
+	 mvn compile
+	 mvn package
+	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar
+  	```
+
+- Run the code:
+    ```
+	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar
+  	```
+- The app will:
+	- Send to a queue asynchronously using a batch.
+	- Pause
+	- Read from queue async
+- Conduct manual geo failover and verify the app continues to function on the secondary (now primary) namespace.
+- Use Service Bus Explorer in the portal to explore queue content while testing.
