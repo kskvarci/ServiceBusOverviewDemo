@@ -1,4 +1,5 @@
 # TOC
+- [Messaging on Azure](#Messaging-on-Azure)
 - [Service Bus Overview](#Service-Bus-Overview)
 	- [Tiers](#Tiers)
 	- [Queues and Topics](#Queues-and-Topics)
@@ -11,6 +12,27 @@
 		- [HA](#HA)
 		- [DR](#DR)  
 - [Demo](#Demo)
+
+# Messaging on Azure
+- [Azure Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/)
+	- Used to facilitate messaging in event based architectures.
+	- Pub / Sub architecture geared towards delivery of very light weight events. 
+	- Events indicate a change of condition or state change that would inform some downstream action. 
+	- Used pervasively on Azure for integration between services.
+- [Azure Event Hubs](https://azure.microsoft.com/en-us/services/event-hubs/)
+	- Build for at scale data streaming scenarios.
+	- Think low latency ingestion of events at a rate of millions of events per second.
+- [Azure Storage Queues](https://docs.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction)
+	- Exposed as part of an Azure Storage Account.
+	- Low cost.
+	- Benefits from all of Azure Storage's features (data encryption, networking integration, auth, etc.)
+	- Multiple Queues can be created in a single account.
+	- Simple queuing functionality with no [advanced features](#Advanced-Capabilities). E.G. cannot support long polling, FIFO, duplicate detection, sessions, etc.
+	- Full compare and contrast [here](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-azure-and-service-bus-queues-compared-contrasted).
+- [Azure Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/)
+	- Primary enterprise messaging service  
+	- used for messaging, decoupling applications, pub / sub scenarios where the message is generally of high value.
+	- Supports many advanced features
 
 # Service Bus Overview
 - With Service Bus, everything starts w/ creation of a Service Bus **Namespace**. Namespaces are the top level containers that hold other messaging entities (queues, topics, subscriptions).  
