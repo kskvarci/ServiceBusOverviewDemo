@@ -207,8 +207,8 @@ Either Basic Standard or Premium.
 ## HA and DR
 The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service-bus/v1_1/) for Service Bus irrespective of configuration is 99.9%.
 ### HA
-- [Availability zones](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-outages-disasters#availability-zones) are supported only with Service Bus Premium SKU and must be enabled at creation time. This spreads the namespace across three distinct zones in regions that support it. Both East US 2 and Central US support zones.
-- Three copies of messaging store (1 primary and 2 secondary) are maintained. Service Bus keeps all the three copies in sync for data and management operations. If the primary copy fails, one of the secondary copies is promoted to primary with no perceived downtime.  
+- [Availability zones](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-outages-disasters#availability-zones) are supported only with Service Bus Premium SKU and must be enabled at creation time. This spreads the namespace across three distinct zones in [regions that support them](https://docs.microsoft.com/en-us/azure/availability-zones/az-region#:~:text=Table%201%20%20%20%20%20%20,%20%20%E2%9C%93%20%2025%20more%20rows%20). Both East US 2 and Central US support zones.
+- Three copies of messaging store (1 primary and 2 secondary) are maintained across zones. Service Bus keeps all the three copies in sync for data and management operations. If the primary copy fails, one of the secondary copies is promoted to primary with no perceived downtime.  
 
 ### DR
 - Service Bus Premium SKU supports [Geo-Disaster Recovery](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-geo-dr).
@@ -218,14 +218,19 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 - The primary / secondary namespaces are fronted by an alias that can be used by connecting clients. This alias will point at the current primary namespace.
 - Failover is manual (unless the customer automates). When failover is initiated, the alias is re-pointed to the secondary namespace and the geo-replication relationship is broken. 
 - Post failover, a new geo-replication relationship must be formed if desired.
+- See [the following](https://docs.microsoft.com/en-us/azure/azure-functions/functions-geo-disaster-recovery#activepassive-for-non-https-functions) for guidance on how to handle DR when using functions in concert with geo-redundant Service Bus implementations.
 
 
 # Demo
-- Walk through ARM templates used to deploy a test environment *(two premium SKU namespaces with geo-replication enabled)*
-	- [Deployment Script](ARM/deploy.sh) *(this will deploy the below templates)*
-	- [Namespace Template](ARM/azuredeploy-namespace.json)
-	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)
-	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)   
+- The below templates can be used to deploy a test environment that includes two premium SKU namespaces with geo-replication enabled.
+	- [Deployment Script](ARM/deploy.sh)  
+*(this will deploy the below templates)*
+	- [Namespace Template](ARM/azuredeploy-namespace.json)  
+*Can be used to deploy one or more namespaces.*
+	- [Queues and Topics Template](ARM/azuredeploy-queuestopics.json)  
+*Deploy queues, topics and subscriptions into namespaces.*
+	- [Geo-Replication Config Template](ARM/azuredeploy-georeplication.json)  
+*Configure geo-replication including an alias between two geo-dispersed namespaces.*
 
 - **"Hello World" Demo**
 	- Walk Through Deployed Resources in Portal
@@ -238,10 +243,17 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 		- Generate SAS for queue1
 		- Geo-Recovery, Alias, Primary and Secondary Namespaces
 
-	- Build and Run a [Simple Java Client](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
-		- Quick walkthrough of code
-		- Add connection string to code
-		- Maven Build
+	- Build and Run a Simple Java Client
+		- Quick walkthrough of [code](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
+		- Add connection string to code.  
+Use the connection string associated w/ the SAS created in the above portal walk-through.
+		- Maven Build  
+ ```
+ cd test
+ mvn compile
+ mvn package
+  ```
+  
 		- Send to Queue sync
 		- Check Service Bus Explorer for messages
 		- Read from queue async
