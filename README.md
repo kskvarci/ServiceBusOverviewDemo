@@ -237,6 +237,7 @@ Run the [deployment script](ARM/deploy.sh).
  ./deploy.sh
 ```
 This will call three ARM templates. One for [namespaces](ARM/azuredeploy-namespace.json), one for [entities](ARM/azuredeploy-queuestopics.json) and one to set up [geo-redundant pairing and an alias](ARM/azuredeploy-georeplication.json).  
+You will likely need to change the namespace names for uniqueness (lines 8-9).
 
 ## **Walk Through Deployed Namespaces in Portal:**
 - SKU
