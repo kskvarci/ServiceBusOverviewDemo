@@ -109,8 +109,9 @@ Either Basic Standard or Premium.
 	- If a caller has access to the keys associated with a policy, they can derive a SAS token that can be used to interact w/ the namespace or entity.
 	- These SAS tokens are similar in concept to those used on Azure Storage Accounts.
 ## Data Encryption
-- Data in the messaging store is automatically encrypted (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
+- Data in the messaging store is automatically encrypted at rest (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
 - It's possible to encrypt using a [customer managed key](https://docs.microsoft.com/en-us/azure/service-bus-messaging/configure-customer-managed-key) stored in Azure Key Vault.
+- Data is encrypted in flight using TLS. See [this article](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide#connections-and-sessions) for details on the AMQP TLS implementation for Service Bus.
 	
 ## Advanced Capabilities
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
