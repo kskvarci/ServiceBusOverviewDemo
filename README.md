@@ -47,10 +47,24 @@ Region
 	- **Pricing Tier:**  
 Either Basic Standard or Premium.  
 
+## Queues, Topics and Subscriptions
+- Service Bus Queues:
+	- Used for point-to-point communication.
+	- Messages in queues are ordered and timestamped on arrival.
+	- Once accepted, the message is held safely in redundant storage.
+ Messages are delivered in pull mode, only delivering messages when requested.
+![](images/about-service-bus-queue.png "")
+- Service Bus Topics:
+	- Used for publish/subscribe scenarios.
+	- A topic will have one or more named **subscriptions**.
+	- When messages are sent to a topic, the subscriptions that they land in can be controlled by configuring subscription based [filters/rules](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#rules-and-actions).
+![](images/about-service-bus-topic.png "")  
+
 ## Tiers
 - **Premium:** (recommended)
 	- Supports queues, scheduled messages, topics, transactions, de-duplication, sessions, forwarding.
 	- Limited to 1MB message size
+	- Up to 80GB Queue / Topic Size
 	- CPU and memory isolation which equates to predictable and consistent performance (messaging unit).
 	- Scale from 1-8 "messaging units" (MU).
 	- An MU is essentially a dedicate VM.
@@ -78,19 +92,6 @@ Either Basic Standard or Premium.
 	- no resource isolation
 	- no geo-disaster recovery
 	- [**Pricing**](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is by the operation
-
-## Queues, Topics and Subscriptions
-- Service Bus Queues:
-	- Used for point-to-point communication.
-	- Messages in queues are ordered and timestamped on arrival.
-	- Once accepted, the message is held safely in redundant storage.
- Messages are delivered in pull mode, only delivering messages when requested.
-![](images/about-service-bus-queue.png "")
-- Service Bus Topics:
-	- Used for publish/subscribe scenarios.
-	- A topic will have one or more named **subscriptions**.
-	- When messages are sent to a topic, the subscriptions that they land in can be controlled by configuring subscription based [filters/rules](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#rules-and-actions).
-![](images/about-service-bus-topic.png "")  
 
 ## Authentication and Authorization
 - [Azure AD](https://docs.microsoft.com/en-us/azure/service-bus-messaging/authenticate-application) (recommended)
