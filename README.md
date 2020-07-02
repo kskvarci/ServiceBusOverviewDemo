@@ -169,9 +169,10 @@ Either Basic Standard or Premium.
 	- Filters are specified via topic subscription rules. Rules can contain conditions as follows:
 		- Boolean
 		- SQL
-		- Correlation
-	- Filters evaluate message properties not the message body.
+		- Correlation (recommended over SQL)
+	- Filters evaluate message properties **not** the message body. The message body in binary.
 	- Can negatively impact throughput (specifically SQL based filters).
+	- Actions on SQL filters allow you to update message properties.
 
 - [**Auto-delete on idle**](https://docs.microsoft.com/en-us/dotnet/api/microsoft.servicebus.messaging.queuedescription.autodeleteonidle?view=azure-dotnet)
 	- Delete a queue if the queue is idle for a set duration. Minimum duration is 5 minutes.  
@@ -220,8 +221,8 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 ### DR
 - Service Bus Premium SKU supports [Geo-Disaster Recovery](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-geo-dr).
 - Two namespaces in different regions can be paired together in a primary / secondary relationship.
-- When paired, all entity **metadata** is replicated between primary and secondary namespaces.
-- The message store data itself is **NOT** replicated. This includes not only messages but also sessions, duplicate detection and schedule messages.
+- When paired, all entity **metadata** is replicated between primary and secondary namespaces (includes access policies).
+- The message store data itself is **NOT** replicated. E.G. not only messages but also sessions, duplicate detection and scheduled messages.
 - The primary / secondary namespaces are fronted by an alias that can be used by connecting clients. This alias will point at the current primary namespace. This is quite literally a DNS CNAME. Example:
 	```
 	namespacekskalias.servicebus.windows.net. 9 IN CNAME namespace1ksk.servicebus.windows.net.

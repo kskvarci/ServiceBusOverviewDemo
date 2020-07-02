@@ -32,7 +32,7 @@ public class SendAndReceiveSessionMessageSample {
         // 1. Going to your Service Bus namespace in Azure Portal.
         // 2. Go to "Shared access policies"
         // 3. Copy the connection string for the "RootManageSharedAccessKey" policy.
-        String connectionString = "ConnstringHere";
+        String connectionString = "connString";
 
         // Create a Queue in that Service Bus namespace.
         String queueName = "queue1";
