@@ -59,7 +59,8 @@ Either Basic Standard or Premium.
 	- Limited to 1000 connections (per MU) 
 	- **Required** for virtual network integration features like services endpoints and private link.  
 	- Recommended for all production use cases.
-	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) for premium is linear based on the number of MUs in operation per hour.  
+	- [Great article](https://techcommunity.microsoft.com/t5/service-bus-blog/premium-messaging-how-fast-is-it/ba-p/370722) (although a bit dated) on premium performance. Code is [here](https://github.com/Azure-Samples/service-bus-dotnet-messaging-performance/tree/master/ThroughputTest) if you are inclined to re-run the tests.
+	- [**Pricing**](https://azure.microsoft.com/en-us/pricing/details/service-bus/) for premium is linear based on the number of MUs running per hour.  
 
 - **Standard:**
 	- Supports queues, scheduled messages, topics, transactions, de-duplication, sessions, forwarding.
@@ -67,7 +68,7 @@ Either Basic Standard or Premium.
 	- Limited to 1000 connections w/ ability to burst over for a cost.
 	- no resource isolation
 	- no geo-disaster recovery  
-	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is base charge + by the operation
+	- [**Pricing**](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is a base charge + by the operation
 
 - **Basic:**
 	- Supports queues and schedules messages
@@ -76,7 +77,7 @@ Either Basic Standard or Premium.
 	- Limited to 100 connections
 	- no resource isolation
 	- no geo-disaster recovery
-	- [Pricing](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is by the operation
+	- [**Pricing**](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is by the operation
 
 ## Queues and Topics
 - Service Bus Queues:
@@ -112,12 +113,16 @@ Either Basic Standard or Premium.
 	
 ## Advanced Capabilities
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
-	- Concurrent de-multiplexing of interleaved message streams.
-	- [Java SDK example](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/servicebus/azure-messaging-servicebus/src/samples/java/com/azure/messaging/servicebus/SendAndReceiveSessionMessageSample.java)
-	- Needs to be enabled at the queue level.
-	- Once enabled, Session ID (app designated) must be specified when submitting messages to a topic or queue.
+	- Gives you a way of designating a relationship between messages using a SessionID.
+	- When a session is created by the client, a lock is obtained on all messages with that sessions SessionID. Messages for that session are only dispatched to that client.
 	- Generally used in "first in, first out" and "request-response" patterns.
+	- Needs to be enabled at the queue level.
+	- Has to be enabled before a session can be used in the API.
+	- Once enabled, Session ID (app designated) must be specified when submitting messages to a topic or queue.
+	- [Java SDK example](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/servicebus/azure-messaging-servicebus/src/samples/java/com/azure/messaging/servicebus/SendAndReceiveSessionMessageSample.java)
+	
 	![](images/sessions.png "")
+	Three clients. Each with a session (1,2,3). Each client pulls only that sessions messages.
   
 - [**Autoforwarding**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-auto-forwarding)
 	- Java examples [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/AutoForward).
