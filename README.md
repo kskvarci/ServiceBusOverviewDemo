@@ -2,7 +2,7 @@
 - [Messaging on Azure](#Messaging-on-Azure)
 - [Service Bus Overview](#Service-Bus-Overview)
 	- [Tiers](#Tiers)
-	- [Queues and Topics](#Queues-and-Topics)
+	- [Queues, Topics and Subscriptions](#Queues,-Topics-and-Subscriptions)
 	- [Authentication and Authorization](#Authentication-and-Authorization) 
 	- [Data Encryption](#Data-Encryption)
 	- [Advanced Capabilities](#Advanced-Capabilities)
@@ -79,7 +79,7 @@ Either Basic Standard or Premium.
 	- no geo-disaster recovery
 	- [**Pricing**](https://azure.microsoft.com/en-us/pricing/details/service-bus/) is by the operation
 
-## Queues and Topics
+## Queues, Topics and Subscriptions
 - Service Bus Queues:
 	- Used for point-to-point communication.
 	- Messages in queues are ordered and timestamped on arrival.
@@ -88,7 +88,7 @@ Either Basic Standard or Premium.
 ![](images/about-service-bus-queue.png "")
 - Service Bus Topics:
 	- Used for publish/subscribe scenarios.
-	- A topic will have one or more named subscriptions.
+	- A topic will have one or more named **subscriptions**.
 	- When messages are sent to a topic, the subscriptions that they land in can be controlled by configuring subscription based [filters/rules](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-queues-topics-subscriptions#rules-and-actions).
 ![](images/about-service-bus-topic.png "")  
 
@@ -115,6 +115,7 @@ Either Basic Standard or Premium.
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
 	- Gives you a way of designating a relationship between messages using a SessionID.
 	- When a session is created by the client, a lock is obtained on all messages with that sessions SessionID. Messages for that session are only dispatched to that client.
+	- Gives you a way of having a set of related messages processed by a single receiver.
 	- Generally used in "first in, first out" and "request-response" patterns.
 	- Needs to be enabled at the queue level.
 	- Has to be enabled before a session can be used in the API.
@@ -132,7 +133,7 @@ Either Basic Standard or Premium.
 	- Use to scale out topics as subscriptions on a given topic are limited to 2000:
 	![](images/autoforwardscale.gif "")
 	- Use to decouple senders and receivers
-	- In below example a subscription is set up to forward all message in a topic into a queue.
+	- In below example a set of subscription is set up to forward a subset of messages hitting a topic into downstream queues for processing. This prevents the topics from hitting quota.
 	![](images/autoforwarddecouple.gif "")
   
 - [**Dead-letter queue**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues)
@@ -208,6 +209,7 @@ Either Basic Standard or Premium.
 	- HTTPS (443)
 - Keep in mind that if using service endpoints, you must [accommodate for connectivity in HA/DR scenarios](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-geo-dr#recommended-configuration).  
 ![](images/private-endpoints-virtual-networks.png "")
+Each region has one private endpoint per regional namespace.
 
 ## HA and DR
 The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service-bus/v1_1/) for Service Bus irrespective of configuration is 99.9%.
@@ -220,7 +222,13 @@ The [documented SLA](https://azure.microsoft.com/en-us/support/legal/sla/service
 - Two namespaces in different regions can be paired together in a primary / secondary relationship.
 - When paired, all entity **metadata** is replicated between primary and secondary namespaces.
 - The message store data itself is **NOT** replicated. This includes not only messages but also sessions, duplicate detection and schedule messages.
-- The primary / secondary namespaces are fronted by an alias that can be used by connecting clients. This alias will point at the current primary namespace.
+- The primary / secondary namespaces are fronted by an alias that can be used by connecting clients. This alias will point at the current primary namespace. This is quite literally a DNS CNAME. Example:
+	```
+	namespacekskalias.servicebus.windows.net. 9 IN CNAME namespace1ksk.servicebus.windows.net.
+	namespace1ksk.servicebus.windows.net. 9 IN CNAME ns-sb2-prod-bn3-az402.trafficmanager.net.
+	ns-sb2-prod-bn3-az402.trafficmanager.net. 299 IN CNAME ns-sb2-prod-bn3-az402-s2.cloudapp.net.
+	ns-sb2-prod-bn3-az402-s2.cloudapp.net. 9 IN A   52.167.106.66
+	```
 - Failover is manual (unless the customer automates). When failover is initiated, the alias is re-pointed to the secondary namespace and the geo-replication relationship is broken. 
 - Post failover, a new geo-replication relationship must be formed if desired.
 - See [the following](https://docs.microsoft.com/en-us/azure/azure-functions/functions-geo-disaster-recovery#activepassive-for-non-https-functions) for guidance on how to handle DR when using functions in concert with geo-redundant Service Bus implementations.
