@@ -49,7 +49,7 @@ Either Basic Standard or Premium.
 
 ## Queues, Topics and Subscriptions
 - Service Bus Queues:
-	- Used for point-to-point communication.
+	- Used for point-to-point communication (competing consumers).
 	- Messages in queues are ordered and timestamped on arrival.
 	- Once accepted, the message is held safely in redundant storage.
  Messages are delivered in pull mode, only delivering messages when requested.
@@ -111,21 +111,24 @@ Either Basic Standard or Premium.
 ## Data Encryption
 - Data in the messaging store is automatically encrypted at rest (AES 256) using a Microsoft managed encryption key. This cannot be turned off.
 - It's possible to encrypt using a [customer managed key](https://docs.microsoft.com/en-us/azure/service-bus-messaging/configure-customer-managed-key) stored in Azure Key Vault.
-- Data is encrypted in flight using TLS. See [this article](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide#connections-and-sessions) for details on the AMQP TLS implementation for Service Bus.
+- Data is encrypted in flight using TLS. It's not possible to establish an unencrypted AMQP session to Service Bus. See [this article](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide#connections-and-sessions) for details on the AMQP TLS implementation for Service Bus.
 	
 ## Advanced Capabilities
 - **[Message Sessions](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sessions)**
+	- 
 	- Gives you a way of designating a relationship between messages using a SessionID.
-	- When a session is created by the client, a lock is obtained on all messages with that sessions SessionID. Messages for that session are only dispatched to that client.
+	- When a session is created by the client on recieve, a lock is obtained on all messages with that sessions SessionID. Messages for that session are only dispatched to that client.
 	- Gives you a way of having a set of related messages processed by a single receiver.
-	- Generally used in "first in, first out" and "request-response" patterns.
 	- Needs to be enabled at the queue level.
 	- Has to be enabled before a session can be used in the API.
 	- Once enabled, Session ID (app designated) must be specified when submitting messages to a topic or queue.
 	- [Java SDK example](https://github.com/Azure/azure-sdk-for-java/blob/master/sdk/servicebus/azure-messaging-servicebus/src/samples/java/com/azure/messaging/servicebus/SendAndReceiveSessionMessageSample.java)
+	- Generally used in "first in, first out" and "request-response" patterns.
+		- **first in, first out:** Send a string of related messages. All messages in the string use the same SessionID. Label property used to indicate start, content and end messages. SequenceNumber used to order content offset from start.
+		- **request-response:** Use a single queue for targeted send and receive operations. E.G. Sender A sends message with unique ID for SessionID. Receiver A picks up message, processes and replies on same session ID. Sender A picks up reply.
 	
 	![](images/sessions.png "")
-	Three clients. Each with a session (1,2,3). Each client pulls only that sessions messages.
+	Three clients. Each with a session (1,2,3). Each client pulls only that sessions messages. 
   
 - [**Autoforwarding**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-auto-forwarding)
 	- Java examples [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/AutoForward).
@@ -135,7 +138,7 @@ Either Basic Standard or Premium.
 	- Use to scale out topics as subscriptions on a given topic are limited to 2000:
 	![](images/autoforwardscale.gif "")
 	- Use to decouple senders and receivers
-	- In below example a set of subscription is set up to forward a subset of messages hitting a topic into downstream queues for processing. This prevents the topics from hitting quota.
+	- In below example a set of subscription is set up to forward a subset of messages sent to a topic into downstream queues for processing. This prevents the topics from hitting quota.
 	![](images/autoforwarddecouple.gif "")
   
 - [**Dead-letter queue**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues)
@@ -143,7 +146,7 @@ Either Basic Standard or Premium.
 	- auto created and cannot be removed.
 	- Designed to hold messages that cannot be delivered or processed.
 	- Not automatically cleaned up.
-	- The messaging engine [may place messages in this queue](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues#moving-messages-to-the-dlq). Your app may explicitly do so as well.
+	- The messaging engine [may place messages in this queue](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues#moving-messages-to-the-dlq) (exceding TTL, hitting max delivery attempts, etc.). Your app may explicitly do so as well.
 
 - [**Scheduled delivery**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-sequencing#scheduled-messages)
 	- Submit messages to a topic or queue for delayed processing.
@@ -152,7 +155,7 @@ Either Basic Standard or Premium.
   
 - [**Message deferral**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/message-deferral)
 	- Allows a client to defer processing of a message that it is willing to process.
-	- Message stays safely in the messaging store but cannot be read unless explicitly retrieved by sequence number.  
+	- Message stays safely in the messaging store but cannot be read unless explicitly retrieved (presumably by the original receiver) by sequence number.  
 
 - [**Batching** ](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-performance-improvements?tabs=net-standard-sdk#client-side-batching)
 	- Delay sending of a message to a queue or topic until a threshold is hit (time based). After which all messages in the windows are sent as a single batch.
@@ -167,7 +170,7 @@ Either Basic Standard or Premium.
 - [**Filtering and Actions**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/topic-filters)
 	- Java examples [here](https://github.com/Azure/azure-service-bus/tree/master/samples/Java/azure-servicebus/TopicFilters).
 	- Applies only to topic subscriptions.
-	- Filter which messages you want to receive.
+	- Used to partition messages into multiple subscriptions or to route messages to specific subscriptions.
 	- Filters are specified via topic subscription rules. Rules can contain conditions as follows:
 		- Boolean
 		- SQL
@@ -181,9 +184,9 @@ Either Basic Standard or Premium.
 
 - [**Duplicate detection**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/duplicate-detection)
 	- If a client sends the same message multiple times Service Bus will discard the duplicates.
+	- Duplicate detection is based off of MessageID which is set by the application.
 	- Enabled on a queue or topic. Off by default.
 	- Must be enabled at queue creation time.
-	- Duplicate detection is based off of MessageID which is set by the application.
 	- Can negatively impact throughput  
 
 ## SDKs and Protocols
