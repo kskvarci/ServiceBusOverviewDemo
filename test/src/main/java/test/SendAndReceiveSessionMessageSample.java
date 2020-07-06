@@ -32,13 +32,14 @@ public class SendAndReceiveSessionMessageSample {
         // 1. Going to your Service Bus namespace in Azure Portal.
         // 2. Go to "Shared access policies"
         // 3. Copy the connection string for the "RootManageSharedAccessKey" policy.
-        String connectionString = "connString";
+        String connectionString = "ConnString";
 
         // Create a Queue in that Service Bus namespace.
         String queueName = "queue1";
 
         // We want all our greetings in the same session to be processed.
-        String sessionId = "greetings-id";
+        // Take a sessionID from the command line arguments
+        String sessionId = args[0];
 
         // Any clients built from the same ServiceBusClientBuilder share the same connection.
         ServiceBusClientBuilder builder = new ServiceBusClientBuilder()
@@ -81,9 +82,11 @@ public class SendAndReceiveSessionMessageSample {
         }).subscribe(unused -> System.out.println("Batch sent asynch."),
             error -> System.err.println("Error occurred while publishing message batch: " + error),
             () -> System.out.println("Batch send complete."));
-        
+
+        // Pause before receiving
         waitForEnter(null);
-        // After sending that message, we receive the messages for that sessionId.
+
+        // Receive the messages for that sessionId.
         receiver.receive().flatMap(context -> {
             ServiceBusReceivedMessage message = context.getMessage();
 
