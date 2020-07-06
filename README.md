@@ -269,7 +269,7 @@ You will likely need to change the namespace names for uniqueness (lines 8-9).
 - Geo-Recovery, Alias, Primary and Secondary Namespaces  
 
 ## **Build and Run a Simple Java Client:**
-- Quick walkthrough of [code](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
+- Quick walk-through of [code](test/src/main/java/test/SendAndReceiveSessionMessageSample.java)
 - Add connection string to code.  
 Use the connection string associated w/ the SAS created in the above portal walk-through.
 - Maven Build  
@@ -281,13 +281,14 @@ Use the connection string associated w/ the SAS created in the above portal walk
 	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar
   	```
 
-- Run the code:
+- Run the app (takes one argument of a sessionID):
     ```
-	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar
+	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar sessionID
   	```
 - The app will:
-	- Send to a queue asynchronously using a batch.
+	- Send to a queue asynchronously using batch and sessions.
 	- Pause
 	- Read from queue async
-- Conduct manual geo failover and verify the app continues to function on the secondary (now primary) namespace.
-- Use Service Bus Explorer in the portal to explore queue content while testing.
+- Run two instances of the app simultaneously with two different session ID's. Notice that each instance of the app will only send and receive messages on it's own session.
+- Conduct manual geo-failover and verify the app continues to function on the secondary (now primary) namespace.
+- Use [Service Bus Explorer](https://github.com/paolosalvatori/ServiceBusExplorer#:~:text=The%20Service%20Bus%20Explorer%20allows%20users%20to%20connect,and%20administer%20messaging%20entities%20in%20an%20easy%20manner.) in the portal to explore queue content while testing. Please note that service bus explorer in the portal will not show messages in a queue with sessions enabled.
