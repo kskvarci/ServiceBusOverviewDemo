@@ -278,7 +278,6 @@ Use the connection string associated w/ the SAS created in the above portal walk
 	 mvn clean
 	 mvn compile
 	 mvn package
-	 java -jar target/SendAndReceiveSessionMessageSample-0.1.0.jar
   	```
 
 - Run the app (takes one argument of a sessionID):
